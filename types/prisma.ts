@@ -3,7 +3,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 export type PrismaTransaction = Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use'>;
 
 export interface PrismaMiddlewareParams {
-  model?: Prisma.ModelName;
+  model?: string;
   action: string;
   args: unknown;
   dataPath: string[];
