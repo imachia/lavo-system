@@ -1,4 +1,5 @@
-import { PrismaClient, DeviceStatus, Role } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { User } from '../types';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();

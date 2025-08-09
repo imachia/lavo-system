@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 declare global {
   var prisma: PrismaClient | undefined;
@@ -15,11 +15,12 @@ const prismaClientSingleton = () => {
   });
 
   // Adiciona interceptor para reconexão automática
-  client.$use(async (params, next) => {
+  client.$use(async (params: Prisma.MiddlewareParams, next: (params: Prisma.MiddlewareParams) => Promise<any>) => {
     try {
       return await next(params);
-    } catch (error: any) {
-      if (error?.message?.includes('Engine is not yet connected')) {
+    } catch (error: Error | unknown) {
+      const err = error as Error;
+      if (err?.message?.includes('Engine is not yet connected')) {
         console.log('Tentando reconectar...');
         await client.$connect();
         return next(params);
