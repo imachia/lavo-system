@@ -1,5 +1,5 @@
 import { Access, Customer } from '~/types';
-import { PrismaTransaction } from './types';
+import { PrismaTransaction } from './prisma';
 
 export interface KPIParams {
   storeId?: string;
