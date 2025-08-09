@@ -12,6 +12,10 @@ RUN npm ci --legacy-peer-deps
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Instalar dependências de build
+RUN apk add --no-cache python3 make g++
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -19,7 +23,10 @@ COPY . .
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Build da aplicação
 RUN npm run build
+RUN rm -rf node_modules
+RUN npm ci --legacy-peer-deps --only=production
 
 # Imagem de produção
 FROM base AS runner
