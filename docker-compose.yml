@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  lavo-system:
+    image: ${DOCKER_USERNAME}/lavo-system:latest
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    deploy:
+      replicas: 2
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.lavo-system.rule=Host(`system.deliwise.com.br`)
+        - traefik.http.services.lavo-system.loadbalancer.server.port=3000
+        - traefik.http.routers.lavo-system.service=lavo-system
+        - traefik.http.routers.lavo-system.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.lavo-system.entrypoints=websecure
+        - traefik.http.routers.lavo-system.tls=true
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - lavo-network
+    expose:
+      - "3000"
+
+networks:
+  lavo-network:
+    driver: overlay
+    attachable: true

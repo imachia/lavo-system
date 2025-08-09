@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(LOJISTA)
+  createdAt DateTime  @default(now())
+
+  // Relations
+  stores        Store[]   @relation("OwnerStores")
+  linkedDevices Device[]  @relation("LinkedByUser")
+}
+
+enum Role {
+  ADM
+  LOJISTA
+  TECNICO
+}
+
+enum DeviceStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CustomerStatus {
+  NEW
+  ACTIVE
+  VIP
+  WARNING
+  BLOCKED
+}
+
+model Store {
+  id        Int        @id @default(autoincrement())
+  name      String
+  address   String
+  ownerId   Int
+  createdAt DateTime   @default(now())
+
+  owner     User       @relation("OwnerStores", fields: [ownerId], references: [id])
+  devices   Device[]
+  customers Customer[]
+  accesses  FaceAccess[]
+}
+
+model Device {
+  id           Int           @id @default(autoincrement())
+  storeId      Int?
+  label        String
+  doorName     String
+  serialNumber String        @unique
+  status       DeviceStatus  @default(ACTIVE)
+  linkedById   Int?
+  createdAt    DateTime      @default(now())
+
+  store        Store?        @relation(fields: [storeId], references: [id])
+  linkedBy     User?         @relation("LinkedByUser", fields: [linkedById], references: [id])
+  accesses     FaceAccess[]
+}
+
+model Customer {
+  id         Int            @id @default(autoincrement())
+  storeId    Int
+  name       String
+  email      String?        @unique
+  phone      String?
+  imageUrl   String         // URL da imagem do cliente
+  status     CustomerStatus @default(NEW)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  store      Store      @relation(fields: [storeId], references: [id])
+  accesses   FaceAccess[]
+}
+
+model FaceAccess {
+  id                Int        @id @default(autoincrement())
+  storeId           Int
+  deviceId          Int
+  customerId        Int        // obrigatório: toda pessoa que acessa precisa estar cadastrada
+  capturedImageUrl  String
+  confidence        Float?
+  createdAt         DateTime   @default(now())
+
+  store     Store     @relation(fields: [storeId], references: [id])
+  device    Device    @relation(fields: [deviceId], references: [id])
+  customer  Customer  @relation(fields: [customerId], references: [id])
+}
+
+model SystemConfig {
+  id         Int       @id @default(1)
+  systemName String    @default("Lavo System")
+  logoUrl    String?
+  updatedAt  DateTime  @updatedAt
+}
