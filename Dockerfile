@@ -24,17 +24,19 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build da aplicação
-# Adiciona verbose para ver mais detalhes do erro
-RUN npm run build --verbose
-RUN rm -rf node_modules
-RUN npm ci --legacy-peer-deps --only=production
+RUN npm list && \
+    npm run build || (echo "Build failed. Checking for type errors..." && npm run typecheck && exit 1)
+
+# Limpa e reinstala apenas dependências de produção
+RUN rm -rf node_modules && \
+    npm ci --legacy-peer-deps --only=production --ignore-scripts
 
 # Imagem de produção
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -47,7 +49,7 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
