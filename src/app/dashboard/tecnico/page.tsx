@@ -1,6 +1,6 @@
-import Button from '@/components/ui/Button';
 'use client';
 
+import Button from '@/components/ui/Button';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/auth-store';

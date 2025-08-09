@@ -20,11 +20,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Ambiente de produção
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build da aplicação
-RUN npm run build
+# Adiciona verbose para ver mais detalhes do erro
+RUN npm run build --verbose
 RUN rm -rf node_modules
 RUN npm ci --legacy-peer-deps --only=production
 
