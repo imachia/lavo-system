@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { globalCache } from '@/lib/cache';
+import { KPIParams, KPIResponse, KPIAccess, KPICustomer } from '~/types/kpi';
+import { PrismaTransaction } from '~/types/prisma';
 
 export const maxDuration = 30; // Aumenta o timeout para 30 segundos
 export const dynamic = 'force-dynamic'; // Sempre executa a rota
