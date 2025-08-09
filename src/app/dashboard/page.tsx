@@ -51,7 +51,10 @@ export default function DashboardPage() {
       const response = await res.json();
       setData({
         ...response,
-        kpis: response.kpis.map((k: KPI) => ({ ...k, icon: iconMap[k.icon] }))
+        kpis: response.kpis.map((k: KPI) => ({ 
+          ...k, 
+          icon: iconMap[k.icon as keyof typeof iconMap] || iconMap.Activity 
+        }))
       });
     } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');

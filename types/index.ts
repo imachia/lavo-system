@@ -1,8 +1,28 @@
+export enum Role {
+  ADMIN = 'ADMIN',
+  LOJISTA = 'LOJISTA',
+  TECNICO = 'TECNICO'
+}
+
+export enum DeviceStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  MAINTENANCE = 'MAINTENANCE'
+}
+
+export enum CustomerStatus {
+  ACTIVE = 'ACTIVE',
+  NEW = 'NEW',
+  VIP = 'VIP',
+  WARNING = 'WARNING',
+  BLOCKED = 'BLOCKED'
+}
+
 export interface User {
   id: number;
   name: string;
   email: string;
-  role: 'ADMIN' | 'LOJISTA' | 'TECNICO';
+  role: Role;
   storeId?: number;
 }
 
@@ -18,7 +38,7 @@ export interface Store {
 export interface Customer {
   id: number;
   name: string;
-  status: 'ACTIVE' | 'NEW' | 'VIP' | 'WARNING' | 'BLOCKED';
+  status: CustomerStatus;
   imageUrl: string;
   phone?: string | null;
   email?: string | null;
@@ -28,7 +48,7 @@ export interface Customer {
 export interface Device {
   id: number;
   name: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE';
+  status: DeviceStatus;
   lastAccess?: Date;
   customerId: number;
 }
@@ -39,4 +59,16 @@ export interface Access {
   customerId: number;
   timestamp: Date;
   status: 'SUCCESS' | 'FAILURE' | 'WARNING';
+}
+
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface AuthStore {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (data: LoginData) => Promise<void>;
+  logout: () => void;
 }

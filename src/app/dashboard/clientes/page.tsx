@@ -103,7 +103,8 @@ export default function ClientesPage() {
         ...(form.email !== undefined && { email: form.email || null }),
         ...(form.phone !== undefined && { phone: form.phone || null }),
         imageUrl: form.imageUrl,
-        ...(form.status && { status: form.status })
+        ...(form.status && { status: form.status }),
+        ...(selectedStore && { storeId: selectedStore })
       };
       
       const data = editing ? baseData : { ...baseData, storeId: selectedStore };

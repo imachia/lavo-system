@@ -15,7 +15,7 @@ const prismaClientSingleton = () => {
   });
 
   // Adiciona interceptor para reconexão automática
-  client.$use(async (params: Prisma.MiddlewareParams, next: (params: Prisma.MiddlewareParams) => Promise<any>) => {
+  client.$use(async (params: any, next: (params: any) => Promise<any>) => {
     try {
       return await next(params);
     } catch (error: Error | unknown) {

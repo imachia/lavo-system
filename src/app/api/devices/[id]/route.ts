@@ -34,13 +34,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         }
       });
 
-      console.log('Dispositivo atualizado:', updated);
-      return NextResponse.json({ device: updated });
+      const device = await prisma.device.findUnique({
+        where: { id: Number(params.id) }
+      });
+      console.log('Dispositivo atualizado:', device);
+      return NextResponse.json({ device });
     } catch (error) {
       console.error('Erro ao atualizar:', error);
       return NextResponse.json({ error: 'Erro ao atualizar dispositivo', details: error }, { status: 500 });
     }
-    return NextResponse.json({ device: updated });
   } catch (error) {
     return NextResponse.json({ error: 'Erro ao atualizar dispositivo' }, { status: 500 });
   }
